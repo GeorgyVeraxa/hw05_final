@@ -150,4 +150,4 @@ CACHES = {
     }
 }
 
-POST_PER_PAGE = 10 
+POST_PER_PAGE = 10
