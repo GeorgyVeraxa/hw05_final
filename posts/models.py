@@ -58,6 +58,3 @@ class Follow(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE,
                                verbose_name="Подписант",
                                related_name="following")
-
-    def __str__(self):
-        return f"{self.user} подписан на {self.author}"
