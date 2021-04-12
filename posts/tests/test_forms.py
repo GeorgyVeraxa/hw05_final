@@ -3,7 +3,6 @@ import tempfile
 
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.forms.fields import ImageField
 from django.test import Client, TestCase
 from django.urls import reverse
 
@@ -78,7 +77,7 @@ class PostFormTests(TestCase):
         """Валидная форма редактирует пост."""
         form_data = {
             "group": self.group.id,
-            "text": "Изменённый текст",}
+            "text": "Изменённый текст", }
         response = self.authorized_client.post(
             reverse("post_edit", kwargs={
                     "username": self.user.username,
