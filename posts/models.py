@@ -1,5 +1,7 @@
+from enum import unique
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models.constraints import UniqueConstraint
 
 User = get_user_model()
 
@@ -52,7 +54,8 @@ class Comment(models.Model):
 class Follow(models.Model):
 
     class Meta:
-        unique_together = ["user", "author"]
+        UniqueConstraint(fields=["user", "author"], name="unique_follow")
+
     user = models.ForeignKey(User, on_delete=models.CASCADE,
                              verbose_name="Подписчик", related_name="follower")
     author = models.ForeignKey(User, on_delete=models.CASCADE,

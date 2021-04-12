@@ -3,6 +3,7 @@ import tempfile
 
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.forms.fields import ImageField
 from django.test import Client, TestCase
 from django.urls import reverse
 
@@ -77,7 +78,7 @@ class PostFormTests(TestCase):
         """Валидная форма редактирует пост."""
         form_data = {
             "group": self.group.id,
-            "text": "Изменённый текст"}
+            "text": "Изменённый текст",}
         response = self.authorized_client.post(
             reverse("post_edit", kwargs={
                     "username": self.user.username,
@@ -90,3 +91,27 @@ class PostFormTests(TestCase):
             group=self.group.id,
             text="Изменённый текст",
             author=self.user).exists())
+
+    def test_edit_upload_incorrect_file(self):
+        """При редактировании нельзя загрузить вместо картинки что-то другое"""
+        small_txt = (
+            b'\xED\x95\x9C'
+        )
+        uploaded = SimpleUploadedFile(
+            name="small.txt",
+            content=small_txt,
+            content_type="txt",
+        )
+        form_data = {
+            "group": self.group.id,
+            "text": "Изменённый текст",
+            "image": uploaded}
+        response = self.authorized_client.post(
+            reverse("post_edit", kwargs={
+                    "username": self.user.username,
+                    "post_id": self.post.id}),
+            data=form_data,
+            follow=True)
+        error = ("Загрузите правильное изображение. Файл, который "
+                 "вы загрузили, поврежден или не является изображением.")
+        self.assertFormError(response, "form", "image", error)

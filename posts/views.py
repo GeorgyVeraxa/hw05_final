@@ -100,11 +100,10 @@ def post_edit(request, username, post_id):
     # добавим в form свойство files
     form = PostForm(request.POST or None,
                     files=request.FILES or None, instance=post)
-    if request.method == "POST":
-        if form.is_valid():
-            form.save()
-            return redirect("post", username=request.user.username,
-                            post_id=post_id)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        return redirect("post", username=request.user.username,
+                        post_id=post_id)
     return render(request, "new.html",
                   {"form": form,
                    "post": post
@@ -151,7 +150,7 @@ def profile_unfollow(request, username):
 
     user = request.user
     author = get_object_or_404(User, username=username)
-    if author.following.filter(user=user).exists() and author != user:
+    if author != user:
         Follow.objects.filter(author=author, user=user).delete()
     return redirect("profile", username=username)
 
